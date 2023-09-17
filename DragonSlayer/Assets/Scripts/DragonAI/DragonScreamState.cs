@@ -11,12 +11,24 @@ public class DragonScreamState : MonoBehaviour, IDragonState
     private float currentWaitedTimeInSeconds = 0f;
     [SerializeField]
     private float waitingTimeInSeconds = 2.8f;
+    [SerializeField]
+    private DragonStamina stamina;
+    [SerializeField]
+    private float staminaBurstAmount = 15f;
+    [SerializeReference]
+    private PlayerDistanceChecker distanceChecker;
+    [SerializeReference]
+    private float maximumCloseDistance = 10f;
+    [SerializeReference]
+    private float maximumMiddleDistance = 30f;
+
     public IDragonState NextState { get; private set; }
 
     public void EnterState()
     {
         NextState = this;
         currentWaitedTimeInSeconds = 0f;
+        stamina.IncreateStamina(staminaBurstAmount);
         animatorController.SetTrigger(animationTrigger);
     }
 
@@ -29,7 +41,26 @@ public class DragonScreamState : MonoBehaviour, IDragonState
         currentWaitedTimeInSeconds += Time.deltaTime;
         if (currentWaitedTimeInSeconds > waitingTimeInSeconds)
         {
-            NextState = GetComponent<DragonIdleState>();
+            NextState = determineNextComponent();
         }
+    }
+
+    private IDragonState determineNextComponent()
+    {
+        IDragonState nextState;
+        float distanceToPlayer = distanceChecker.DistanceToPlayer;
+        if (distanceToPlayer < maximumCloseDistance)
+        {
+            nextState = GetComponent<DragonWalkTowardsState>();
+        }
+        else if (distanceToPlayer < maximumMiddleDistance)
+        {
+            nextState = GetComponent<DragonRunTowardsState>();
+        }
+        else
+        {
+            nextState = GetComponent<DragonWalkTowardsState>();
+        }
+        return nextState;
     }
 }

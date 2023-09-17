@@ -8,8 +8,12 @@ public class DragonLightAttackState : MonoBehaviour, IDragonState
     private Animator animatorController;
     [SerializeField]
     private string animationTrigger = "LightAttack";
+    [SerializeField]
+    private DragonStamina stamina;
+    [SerializeField]
+    private float staminaCost;
     private float currentWaitedTimeInSeconds = 0f;
-    private float waitingTimeInSeconds = 5f;
+    private float waitingTimeInSeconds = 1.2f;
     public IDragonState NextState { get; private set; }
 
     public void EnterState()
@@ -17,6 +21,7 @@ public class DragonLightAttackState : MonoBehaviour, IDragonState
         NextState = this;
         currentWaitedTimeInSeconds = 0f;
         animatorController.SetTrigger(animationTrigger);
+        stamina.ReduceStamina(staminaCost);
     }
 
     public void ExitState()
@@ -28,7 +33,21 @@ public class DragonLightAttackState : MonoBehaviour, IDragonState
         currentWaitedTimeInSeconds += Time.deltaTime;
         if (currentWaitedTimeInSeconds > waitingTimeInSeconds)
         {
-
+            NextState = determineNextState();
         }
+    }
+
+    private IDragonState determineNextState()
+    {
+        IDragonState nextState;
+        if (Mathf.Approximately(stamina.GetStaminaPercentage(), 0f))
+        {
+            nextState = GetComponent<DragonScreamState>();
+        }
+        else
+        {
+            nextState = GetComponent<DragonWalkTowardsState>();
+        }
+        return nextState;
     }
 }

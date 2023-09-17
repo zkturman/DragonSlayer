@@ -8,27 +8,44 @@ public class DragonRunTowardsState : MonoBehaviour, IDragonState
     private Animator animatorController;
     [SerializeField]
     private string animationTrigger = "Run";
-    private float currentWaitedTimeInSeconds = 0f;
-    private float waitingTimeInSeconds = 5f;
+    [SerializeField]
+    private DragonStamina stamina;
+    [SerializeField]
+    private float staminaDrainPerSecon = 3f;
+    [SerializeField]
+    private DragonBodyTracker dragonBody;
+    [SerializeField]
+    private float runningSpeed;
+    [SerializeField]
+    private PlayerDistanceChecker playerDistanceChecker;
+    [SerializeField]
+    private float minimumAttackingDistance = 3f;
+
     public IDragonState NextState { get; private set; }
 
     public void EnterState()
     {
         NextState = this;
-        currentWaitedTimeInSeconds = 0f;
         animatorController.SetTrigger(animationTrigger);
+        dragonBody.SetForwardVelocity(runningSpeed);
     }
 
     public void ExitState()
     {
+        dragonBody.SetForwardVelocity(0f);
     }
 
     public void UpdateState()
     {
-        currentWaitedTimeInSeconds += Time.deltaTime;
-        if (currentWaitedTimeInSeconds > waitingTimeInSeconds)
+        stamina.ReduceStamina(staminaDrainPerSecon * Time.deltaTime);
+        dragonBody.FacePlayer();
+        if (playerDistanceChecker.DistanceToPlayer < minimumAttackingDistance)
         {
-
+            NextState = GetComponent<DragonLightAttackState>();
+        }
+        if (Mathf.Approximately(stamina.GetStaminaPercentage(), 0f))
+        {
+            NextState = GetComponent<DragonScreamState>();
         }
     }
 }
