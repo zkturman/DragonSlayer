@@ -21,6 +21,10 @@ public class DragonScreamState : MonoBehaviour, IDragonState
     private float maximumCloseDistance = 10f;
     [SerializeReference]
     private float maximumMiddleDistance = 30f;
+    [SerializeField]
+    private AudioSource roarSource;
+    [SerializeField]
+    private AudioClip clipToPlay;
 
     public IDragonState NextState { get; private set; }
 
@@ -30,6 +34,7 @@ public class DragonScreamState : MonoBehaviour, IDragonState
         currentWaitedTimeInSeconds = 0f;
         stamina.IncreateStamina(staminaBurstAmount);
         animatorController.SetTrigger(animationTrigger);
+        
     }
 
     public void ExitState()
