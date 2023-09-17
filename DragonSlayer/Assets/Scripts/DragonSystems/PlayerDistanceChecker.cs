@@ -26,6 +26,5 @@ public class PlayerDistanceChecker : MonoBehaviour
     private void setDistance()
     {
         DistanceToPlayer = Vector3.Distance(objectToTrack.transform.position, dragonBody.DragonTransform.position);
-        Debug.Log("The distance is " + DistanceToPlayer);
     }
 }

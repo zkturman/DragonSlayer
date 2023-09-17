@@ -39,6 +39,7 @@ public class DragonRunTowardsState : MonoBehaviour, IDragonState
     {
         stamina.ReduceStamina(staminaDrainPerSecon * Time.deltaTime);
         dragonBody.FacePlayer();
+        dragonBody.SetForwardVelocity(runningSpeed);
         if (playerDistanceChecker.DistanceToPlayer < minimumAttackingDistance)
         {
             NextState = GetComponent<DragonLightAttackState>();
