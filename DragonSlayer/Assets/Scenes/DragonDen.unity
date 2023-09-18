@@ -3248,6 +3248,8 @@ MonoBehaviour:
   distanceChecker: {fileID: 194674722}
   maximumCloseDistance: 10
   maximumMiddleDistance: 30
+  roarSource: {fileID: 194674726}
+  clipToPlay: {fileID: 8300000, guid: 18d316e88ad48754aa4a360cf90d4d15, type: 3}
 --- !u!114 &1036357241
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -25,6 +25,8 @@ public class DragonScreamState : MonoBehaviour, IDragonState
     private AudioSource roarSource;
     [SerializeField]
     private AudioClip clipToPlay;
+    private float clipDelay;
+    private bool isPlayingRoar = false;
 
     public IDragonState NextState { get; private set; }
 
@@ -34,7 +36,7 @@ public class DragonScreamState : MonoBehaviour, IDragonState
         currentWaitedTimeInSeconds = 0f;
         stamina.IncreateStamina(staminaBurstAmount);
         animatorController.SetTrigger(animationTrigger);
-        
+        clipDelay = waitingTimeInSeconds - clipToPlay.length;
     }
 
     public void ExitState()
@@ -44,6 +46,10 @@ public class DragonScreamState : MonoBehaviour, IDragonState
     public void UpdateState()
     {
         currentWaitedTimeInSeconds += Time.deltaTime;
+        if (currentWaitedTimeInSeconds >= clipDelay)
+        {
+            playRoarSound();
+        }
         if (currentWaitedTimeInSeconds > waitingTimeInSeconds)
         {
             NextState = determineNextComponent();
@@ -67,5 +73,14 @@ public class DragonScreamState : MonoBehaviour, IDragonState
             nextState = GetComponent<DragonWalkTowardsState>();
         }
         return nextState;
+    }
+
+    private void playRoarSound()
+    {
+        if (!isPlayingRoar)
+        {
+            roarSource.PlayOneShot(clipToPlay);
+            isPlayingRoar = true;
+        }
     }
 }
